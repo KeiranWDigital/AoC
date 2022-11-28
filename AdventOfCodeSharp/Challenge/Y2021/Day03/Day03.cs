@@ -54,6 +54,9 @@ public class Day03: IChallenge
     private char LeastCommonBit(IEnumerable<string> diagnosticLines, int bitToCheck) => MostCommonBit(diagnosticLines, bitToCheck) == '1' ? '0' : '1';
 
     private string[] GetBinaryEnumerable(string input) =>
-        input.Split('\n').Where(s=> !string.IsNullOrWhiteSpace(s)).ToArray();
+        input.Split(
+            new[] { "\r\n", "\r", "\n" },
+            StringSplitOptions.None
+        ).Where(s=> !string.IsNullOrWhiteSpace(s)).ToArray();
 
 }
