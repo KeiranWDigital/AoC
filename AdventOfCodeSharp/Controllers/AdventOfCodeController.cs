@@ -79,14 +79,18 @@ public class AdventOfCodeController : ControllerBase
         if (challenge == null) return "Challenge Not Implemented Yet";
 
 
-        var basePath = _environment.ContentRootPath;
+        
 
         string input;
         await using (var stream = typeof(Program).Assembly.GetManifestResourceStream($"AdventOfCodeSharp.Challenge.{challenge.WorkingDir().Replace("\\",".")}.data.input"))
         using (var reader = new StreamReader(stream))
             input = await reader.ReadToEndAsync();
 
-        //var challengePath = Path.Combine(basePath, "Challenge", challenge.WorkingDir());
+
+        var basePath = _environment.ContentRootPath;
+        var challengePath = Path.Combine(basePath, "Challenge", challenge.WorkingDir());
+
+        //
         //
         //var dataPath = Path.Combine(challengePath, "data.input");
         //if (!Exists(dataPath)) return "Missing Challenge Data";
@@ -94,8 +98,7 @@ public class AdventOfCodeController : ControllerBase
         //var input = await ReadAllTextAsync(dataPath);
 
         var result = await challenge.CompleteChallenge(input);
-
-        //await WriteAllLinesAsync(Path.Combine(challengePath, "result.output"), new[] { JsonConvert.SerializeObject(result) ?? "" });
+        await WriteAllLinesAsync(Path.Combine(challengePath, "result.output"), new[] { JsonConvert.SerializeObject(result) ?? "" });
 
         return result;
     }
