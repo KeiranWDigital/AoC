@@ -43,7 +43,7 @@ public class AdventOfCodeController : ControllerBase
     [Route("Test")]
     public async Task<IEnumerable<Result>> DoAoCTaskTest()
     {
-        return await RunAoCTask(new DateTime(2021,12,01), new DateTime(2021, 12, 25));
+        return await RunAoCTask(new DateTime(2022,12,01), new DateTime(2022, 12, 25));
     }
 
     private protected async Task<IEnumerable<Result>> RunAoCTask(DateTime? startDateTime, DateTime? endDateTime = null)
@@ -78,14 +78,10 @@ public class AdventOfCodeController : ControllerBase
     {
         if (challenge == null) return "Challenge Not Implemented Yet";
 
-
-        
-
         string input;
         await using (var stream = typeof(Program).Assembly.GetManifestResourceStream($"AdventOfCodeSharp.Challenge.{challenge.WorkingDir().Replace("\\",".")}.data.input"))
         using (var reader = new StreamReader(stream))
             input = await reader.ReadToEndAsync();
-
 
         var basePath = _environment.ContentRootPath;
         var challengePath = Path.Combine(basePath, "Challenge", challenge.WorkingDir());

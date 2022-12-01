@@ -1,4 +1,4 @@
-﻿namespace AdventOfCodeSharp.Challenge.Y2021.Day01;
+namespace AdventOfCodeSharp.Challenge.Y2021.Day01;
 
 //Invoked Implicitly
 [ChallengeName("Day 01: Sonar Sweep")]
@@ -26,5 +26,8 @@ public class Day01 : IChallenge
         return await DepthIncrease(groups);
     }
 
-    private IEnumerable<int>? GetNumberEnumerable(string input) => input.Split("\n").Where(s => !string.IsNullOrWhiteSpace(s)).Select(int.Parse);
+    private IEnumerable<int>? GetNumberEnumerable(string input) => input.Split(
+        new[] { "\r\n", "\r", "\n" },
+        StringSplitOptions.None
+    ).Where(s => !string.IsNullOrWhiteSpace(s)).Select(int.Parse);
 }

@@ -30,6 +30,11 @@ public static class ChallengeExtensions
         )?.Name;
     }
 
+    public static IEnumerable<int?>? GetNumberEnumerableIncNull(string input) => input.Split(
+        new[] { "\r\n", "\r", "\n" },
+        StringSplitOptions.None
+    ).Select(i => !string.IsNullOrWhiteSpace(i)? (int?) int.Parse(i) : null);
+
     public static string WorkingDir(int year)
     {
         return Path.Combine($"Y{year}");
