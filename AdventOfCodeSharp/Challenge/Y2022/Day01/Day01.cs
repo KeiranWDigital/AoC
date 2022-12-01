@@ -1,12 +1,13 @@
-﻿namespace AdventOfCodeSharp.Challenge.Y2022.Day01
+namespace AdventOfCodeSharp.Challenge.Y2022.Day01
 {
+    [ChallengeName("Day 01: Calorie Counting")]
     public class Day01 : IChallenge
     {
-        public async Task<object> TaskPartOne(string input) => await calculateCalories(ChallengeExtensions.GetNumberEnumerableIncNull(input));
-        public async Task<object> TaskPartTwo(string input) => await calculateCaloriesTopThree(ChallengeExtensions.GetNumberEnumerableIncNull(input));
+        public async Task<object> TaskPartOne(string input) => await ElfCalories(input);
+        public async Task<object> TaskPartTwo(string input) => await ElfCaloriesTop3(input);
 
-
-        public async Task<object> calculateCalories(IEnumerable<int?> challenge)
+        [Obsolete]
+        public async Task<object> CalculateCalories(IEnumerable<int?> challenge)
         {
             int elf = 1;
             int elfVal = 0;
@@ -34,8 +35,8 @@
 
             return highest;
         }
-
-        public async Task<object> calculateCaloriesTopThree(IEnumerable<int?> challenge)
+        [Obsolete]
+        public async Task<object> CalculateCaloriesTopThree(IEnumerable<int?> challenge)
         {
 
             var elves = new List<int>();
@@ -58,5 +59,15 @@
             return elves.OrderByDescending(i => i).Take(3).Sum(x => x);
         }
 
+
+        public async Task<object> ElfCalories(string input)
+        {
+            return input.Split("\r\n\r\n").Select(e => e.Split("\r\n").Where(x => !string.IsNullOrWhiteSpace(x)).Select(int.Parse).Sum()).Max();
+        }
+
+        public async Task<object> ElfCaloriesTop3(string input)
+        {
+            return input.Split("\r\n\r\n").Select(e => e.Split("\r\n").Where(x => !string.IsNullOrWhiteSpace(x)).Select(int.Parse).Sum()).OrderByDescending(i => i).Take(3).Sum();
+        }
     }
 }

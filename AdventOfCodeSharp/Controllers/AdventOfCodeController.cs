@@ -86,13 +86,6 @@ public class AdventOfCodeController : ControllerBase
         var basePath = _environment.ContentRootPath;
         var challengePath = Path.Combine(basePath, "Challenge", challenge.WorkingDir());
 
-        //
-        //
-        //var dataPath = Path.Combine(challengePath, "data.input");
-        //if (!Exists(dataPath)) return "Missing Challenge Data";
-        //
-        //var input = await ReadAllTextAsync(dataPath);
-
         var result = await challenge.CompleteChallenge(input);
         await WriteAllLinesAsync(Path.Combine(challengePath, "result.output"), new[] { JsonConvert.SerializeObject(result) ?? "" });
 
