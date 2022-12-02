@@ -16,14 +16,6 @@ public class AdventOfCodeController : ControllerBase
         _environment = environment;
     }
 
-    [HttpPost]
-    [Route("Day")]
-    public async Task<Result> DoAoCTask(DateTime? day)
-    {
-        var results = await RunAoCTask(day);
-        return results.First();
-    }
-
     [HttpGet]
     [Route("Today")]
     public async Task<Result> DoAoCTask()
@@ -34,16 +26,17 @@ public class AdventOfCodeController : ControllerBase
 
     [HttpPost]
     [Route("Year")]
-    public async Task<IEnumerable<Result>> DoAoCTask(int year)
+    public async Task<IEnumerable<Result>> DoAoCTask(int? year)
     {
-        return await RunAoCTask(new DateTime(year, 12, 01), new DateTime(year, 12, 25));
+        year = year ?? DateTime.Today.Year;
+        return await RunAoCTask(new DateTime((int)year, 12, 01), new DateTime((int)year, 12, 25));
     }
 
     [HttpGet]
-    [Route("Test")]
+    [Route("All")]
     public async Task<IEnumerable<Result>> DoAoCTaskTest()
     {
-        return await RunAoCTask(new DateTime(2022,12,01), new DateTime(2022, 12, 25));
+        return await RunAoCTask(new DateTime(2021,12,01), new DateTime(2030, 12, 25));
     }
 
     private protected async Task<IEnumerable<Result>> RunAoCTask(DateTime? startDateTime, DateTime? endDateTime = null)

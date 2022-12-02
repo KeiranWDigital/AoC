@@ -4,14 +4,14 @@
 public class Day03: IChallenge
 {
     public async Task<object> TaskPartOne(string diagnostics) => GetPowerConsumption(GetBinaryEnumerable(diagnostics));
-    public async Task<object> TaskPartTwo(string diagnostics) => GetOxegenLevels(GetBinaryEnumerable(diagnostics));
+    public async Task<object> TaskPartTwo(string diagnostics) => GetOxygenLevels(GetBinaryEnumerable(diagnostics));
 
     private object GetPowerConsumption(IEnumerable<string> diagnostics)
     {
         return GammaRate(diagnostics) * EpsilonRate(diagnostics);
     }
 
-    private object GetOxegenLevels(string[] diagnostics)
+    private object GetOxygenLevels(string[] diagnostics)
     {
         return OxygenGenerator(diagnostics) * CarbonScrubber(diagnostics);
     }

@@ -5,8 +5,7 @@ public interface IChallenge
 {
     public Task<object> TaskPartOne(string input);
 
-    public async Task<object> TaskPartTwo(string input) => null;
-
+    public Task<object> TaskPartTwo(string input);
 }
 
 public static class ChallengeExtensions
