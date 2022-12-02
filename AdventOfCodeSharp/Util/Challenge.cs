@@ -16,7 +16,7 @@ public static class ChallengeExtensions
         var partTwoResult = await challenge.TaskPartTwo(input);
         var name = challenge.GetName() ?? "Unknown";
 
-        var result = new Result(name, partOneResult, partTwoResult);
+        var result = new Result(name, partOneResult, partTwoResult, new DateTime(Year(challenge), 12, Day(challenge)));
         return result;
     }
 
@@ -29,7 +29,7 @@ public static class ChallengeExtensions
         )?.Name;
     }
 
-    public static IEnumerable<int?>? GetNumberEnumerableIncNull(string input) => input.Split(
+    public static IEnumerable<int?>? GetNumberEnumerableIncNull(this string input) => input.Split(
         new[] { "\r\n", "\r", "\n" },
         StringSplitOptions.None
     ).Select(i => !string.IsNullOrWhiteSpace(i)? (int?) int.Parse(i) : null);
@@ -71,10 +71,10 @@ public static class ChallengeExtensions
 
     public static bool IsChallenge(Type challenge, DateTime startDateTime, DateTime? endDateTime)
     {
-        var day = Day(challenge);
-        return Year(challenge) == startDateTime.Year && (
-            (endDateTime is null && day == startDateTime.Day)
-            || (endDateTime is not null && day >= startDateTime.Day && day <= endDateTime.Value.Day));
+        var date = new DateTime(Year(challenge), 12, Day(challenge));
+        return date >= startDateTime && (
+            (endDateTime is null)
+            || (date <= endDateTime));
 
     }
 }
