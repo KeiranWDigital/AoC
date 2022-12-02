@@ -35,9 +35,7 @@
                 "Y" => plan switch
                 {
                     true => Game.Paper,
-                    false when Equals(opponent, Game.Rock) => Game.Rock,
-                    false when Equals(opponent, Game.Paper) => Game.Paper,
-                    false when Equals(opponent, Game.Scissors) => Game.Scissors
+                    false => opponent
                 },
                 "Z" => plan switch
                 {
@@ -49,11 +47,11 @@
             };
             return myHand switch
             {
-                var x when Equals(myHand, opponent) => (int)Game.Draw + (int)myHand,
-                Game.Rock when Equals(opponent, Game.Scissors) => (int)Game.Win + (int)myHand,
-                Game.Paper when Equals(opponent, Game.Rock) => (int)Game.Win + (int)myHand,
-                Game.Scissors when Equals(opponent, Game.Paper) => (int)Game.Win + (int)myHand,
-                _ => (int)Game.Loss + (int)myHand
+                var x when Equals(myHand, opponent) => Game.Draw.GameResult(myHand),
+                Game.Rock when Equals(opponent, Game.Scissors) => Game.Win.GameResult(myHand),
+                Game.Paper when Equals(opponent, Game.Rock) => Game.Win.GameResult(myHand),
+                Game.Scissors when Equals(opponent, Game.Paper) => Game.Win.GameResult(myHand),
+                _ => Game.Loss.GameResult(myHand)
             };
         }
 
@@ -66,5 +64,16 @@
             Loss = 0,
             Draw = 3
         }
+
+        
     }
+
+    public static class GameExtensions
+    {
+        public static int GameResult(this Day02.Game a, Day02.Game b)
+        {
+            return (int)a + (int)b;
+        }
+    }
+
 }
