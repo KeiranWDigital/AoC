@@ -16,7 +16,7 @@ public static class ChallengeExtensions
         var partTwoResult = await challenge.TaskPartTwo(input);
         var name = challenge.GetName() ?? "Unknown";
 
-        var result = new Result(name, partOneResult, partTwoResult, new DateTime(Year(challenge), 12, Day(challenge)));
+        var result = new Result(name, partOneResult, partTwoResult, $"{Year(challenge)}/{Day(challenge):00}");
         return result;
     }
 
