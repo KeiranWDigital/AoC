@@ -1,79 +1,77 @@
-﻿namespace AdventOfCodeSharp.Challenge.Y2022.Day02
+﻿namespace AdventOfCodeSharp.Challenge.Y2022.Day02;
+
+[ChallengeName("Day 02: Rock Paper Scissors")]
+public class Day02: IChallenge
 {
-    [ChallengeName("Day 02: Rock Paper Scissors")]
-    public class Day02: IChallenge
+    public async Task<object> TaskPartOne(string input) => await RockPaperScissors(input, true);
+
+    public async Task<object> TaskPartTwo(string input) => await RockPaperScissors(input, false);
+
+    public async Task<object> RockPaperScissors(string input, bool plan)
     {
-        public async Task<object> TaskPartOne(string input) => await RockPaperScissors(input, true);
+        var rps = input.Split("\r\n", StringSplitOptions.RemoveEmptyEntries).Select(x => x.Split(" ", StringSplitOptions.RemoveEmptyEntries).ToArray()).ToArray();
 
-        public async Task<object> TaskPartTwo(string input) => await RockPaperScissors(input, false);
+        return rps.Select(x => Score(x, plan)).Sum();
+    }
 
-        public async Task<object> RockPaperScissors(string input, bool plan)
+    public int Score(string[] hand, bool plan)
+    {
+        var opponent = hand[0] switch
         {
-            var rps = input.Split("\r\n", StringSplitOptions.RemoveEmptyEntries).Select(x => x.Split(" ", StringSplitOptions.RemoveEmptyEntries).ToArray()).ToArray();
+            "A" => Game.Rock,
+            "B" => Game.Paper,
+            "C" => Game.Scissors
+        };
 
-            return rps.Select(x => Score(x, plan)).Sum();
-        }
-
-        public int Score(string[] hand, bool plan)
+        var myHand = hand[1] switch
         {
-            var opponent = hand[0] switch
+            "X" => plan switch
             {
-                "A" => Game.Rock,
-                "B" => Game.Paper,
-                "C" => Game.Scissors
-            };
-
-            var myHand = hand[1] switch
+                true => Game.Rock,
+                false when Equals(opponent, Game.Rock) => Game.Scissors,
+                false when Equals(opponent, Game.Paper) => Game.Rock,
+                false when Equals(opponent, Game.Scissors) => Game.Paper
+            },
+            "Y" => plan switch
             {
-                "X" => plan switch
-                {
-                    true => Game.Rock,
-                    false when Equals(opponent, Game.Rock) => Game.Scissors,
-                    false when Equals(opponent, Game.Paper) => Game.Rock,
-                    false when Equals(opponent, Game.Scissors) => Game.Paper
-                },
-                "Y" => plan switch
-                {
-                    true => Game.Paper,
-                    false => opponent
-                },
-                "Z" => plan switch
-                {
-                    true => Game.Scissors,
-                    false when Equals(opponent, Game.Rock) => Game.Paper,
-                    false when Equals(opponent, Game.Paper) => Game.Scissors,
-                    false when Equals(opponent, Game.Scissors) => Game.Rock
-                }
-            };
-            return myHand switch
+                true => Game.Paper,
+                false => opponent
+            },
+            "Z" => plan switch
             {
-                var x when Equals(myHand, opponent) => Game.Draw.GameResult(myHand),
-                Game.Rock when Equals(opponent, Game.Scissors) => Game.Win.GameResult(myHand),
-                Game.Paper when Equals(opponent, Game.Rock) => Game.Win.GameResult(myHand),
-                Game.Scissors when Equals(opponent, Game.Paper) => Game.Win.GameResult(myHand),
-                _ => Game.Loss.GameResult(myHand)
-            };
-        }
-
-        public enum Game
+                true => Game.Scissors,
+                false when Equals(opponent, Game.Rock) => Game.Paper,
+                false when Equals(opponent, Game.Paper) => Game.Scissors,
+                false when Equals(opponent, Game.Scissors) => Game.Rock
+            }
+        };
+        return myHand switch
         {
-            Rock = 1,
-            Paper = 2,
-            Scissors = 3,
-            Win = 6,
-            Loss = 0,
-            Draw = 3
-        }
+            var x when Equals(myHand, opponent) => Game.Draw.GameResult(myHand),
+            Game.Rock when Equals(opponent, Game.Scissors) => Game.Win.GameResult(myHand),
+            Game.Paper when Equals(opponent, Game.Rock) => Game.Win.GameResult(myHand),
+            Game.Scissors when Equals(opponent, Game.Paper) => Game.Win.GameResult(myHand),
+            _ => Game.Loss.GameResult(myHand)
+        };
+    }
+
+    public enum Game
+    {
+        Rock = 1,
+        Paper = 2,
+        Scissors = 3,
+        Win = 6,
+        Loss = 0,
+        Draw = 3
+    }
 
         
-    }
+}
 
-    public static class GameExtensions
+public static class GameExtensions
+{
+    public static int GameResult(this Day02.Game a, Day02.Game b)
     {
-        public static int GameResult(this Day02.Game a, Day02.Game b)
-        {
-            return (int)a + (int)b;
-        }
+        return (int)a + (int)b;
     }
-
 }
