@@ -80,7 +80,7 @@ public class AdventOfCodeController : ControllerBase
         var challengePath = Path.Combine(basePath, "Challenge", challenge.WorkingDir());
 
         var result = await challenge.CompleteChallenge(input);
-        await WriteAllLinesAsync(Path.Combine(challengePath, "result.output"), new[] { JsonConvert.SerializeObject(result) ?? "" });
+        await WriteAllLinesAsync(Path.Combine(challengePath, "result.output"), new[] { JsonConvert.SerializeObject(result, Formatting.Indented) ?? "" });
 
         return result;
     }

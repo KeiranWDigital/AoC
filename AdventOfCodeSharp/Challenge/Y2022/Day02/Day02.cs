@@ -16,16 +16,22 @@ public class Day02: IChallenge
 
     public int Score(string[] hand, bool plan)
     {
+#pragma warning disable CS8509
         var opponent = hand[0] switch
+#pragma warning restore CS8509
         {
             "A" => Game.Rock,
             "B" => Game.Paper,
             "C" => Game.Scissors
         };
 
+#pragma warning disable CS8509
         var myHand = hand[1] switch
+#pragma warning restore CS8509
         {
+#pragma warning disable CS8846
             "X" => plan switch
+#pragma warning restore CS8846
             {
                 true => Game.Rock,
                 false when Equals(opponent, Game.Rock) => Game.Scissors,
@@ -37,7 +43,9 @@ public class Day02: IChallenge
                 true => Game.Paper,
                 false => opponent
             },
+#pragma warning disable CS8846
             "Z" => plan switch
+#pragma warning restore CS8846
             {
                 true => Game.Scissors,
                 false when Equals(opponent, Game.Rock) => Game.Paper,

@@ -42,7 +42,7 @@ public class Day04 :IChallenge
         foreach (var pair in pairs)
         {
             var sections = pair.Split(",").Select(s => s.Split("-").Select(int.Parse).ToArray()).ToArray();
-            
+
             var elf1 = Enumerable.Range(sections[0][0], sections[0][1]-sections[0][0]+1).ToList();
             var elf2 = Enumerable.Range(sections[1][0], sections[1][1]-sections[1][0]+1).ToList();
 

@@ -18,7 +18,9 @@ public class Day03: IChallenge
 
     private int ConvertToPowerInt(IEnumerable<string> diagnosticLines, Func<IEnumerable<string>, int, char> calculateCommonBitFunc)
     {
+#pragma warning disable CS8602
         var lastBit = diagnosticLines.FirstOrDefault().Length;
+#pragma warning restore CS8602
 
         var commonBits = "";
         for (var bitToCheck = 0; bitToCheck < lastBit; bitToCheck++)
@@ -31,9 +33,7 @@ public class Day03: IChallenge
 
     private int ConvertToO2Int(string[] diagnosticLines, Func<string[], int, char> calculateCommonBitFunc)
     {
-        var lastBit = diagnosticLines[0].Length; 
-
-        var commonBits = "";
+        var lastBit = diagnosticLines[0].Length;
         for (var bitToCheck = 0; bitToCheck < lastBit && diagnosticLines.Length > 1; bitToCheck++)
         {
             var bit = calculateCommonBitFunc(diagnosticLines, bitToCheck);
