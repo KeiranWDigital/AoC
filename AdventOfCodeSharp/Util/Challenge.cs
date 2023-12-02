@@ -28,6 +28,10 @@ public static class ChallengeExtensions
                 .GetCustomAttribute(typeof(ChallengeName)) as ChallengeName
         )?.Name;
     }
+    public static IEnumerable<string?>? GetLines(this string input) => input.Split(
+        new[] { "\r\n", "\r", "\n" },
+        StringSplitOptions.None
+    );
 
     public static IEnumerable<int?>? GetNumberEnumerableIncNull(this string input) => input.Split(
         new[] { "\r\n", "\r", "\n" },
