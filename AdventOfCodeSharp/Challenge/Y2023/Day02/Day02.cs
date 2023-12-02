@@ -81,21 +81,15 @@ public class Day02 : IChallenge
 
     public async Task<object> TaskPartOne(string input)
     {
-
         var allowedRed = 12;
         var allowedGreen = 13;
         var allowedBlue = 14;
 
-        var inputArray = input.Split("\r\n");
-
-        List<Game> games = new List<Game>();
-
         int total = 0;
 
-        foreach (var game in inputArray)
+        foreach (var game in input.Split("\r\n"))
         {
             var gameObj = ParseGame(game);
-            games.Add(gameObj);
             var red = gameObj.red;
             var green = gameObj.green;
             var blue = gameObj.blue;
@@ -115,17 +109,11 @@ public class Day02 : IChallenge
 
         var inputArray = input.Split("\r\n");
 
-        List<Game> games = new List<Game>();
-
         int total = 0;
 
         foreach (var game in inputArray)
         {
-            var gameObj = ParseGame(game);
-            games.Add(gameObj);
-            var red = gameObj.red;
-            var green = gameObj.green;
-            var blue = gameObj.blue;
+            var gameObj = ParseGame(game); 
 
             total += gameObj.power;
         }
