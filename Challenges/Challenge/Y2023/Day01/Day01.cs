@@ -4,109 +4,69 @@
 [ChallengeName("Day 1: Trebuchet?!")]
 public class Day01 : IChallenge
 {
-    public async Task<object> TaskPartOne(string input) => await onlyNumbers(input);
-    public async Task<object> TaskPartTwo(string input) => await wordsAndDigits(input);
 
-    public async Task<int> onlyNumbers(string input)
+
+    public async Task<object> TaskPartOne(string input)
     {
-        var lines = input.GetLines();
 
-        char[] testChars = new char[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
+        var inputArray = input.Split("\r\n");
 
-        return (from line in lines let minIndex = line.IndexOfAny(testChars) let maxIndex = line.LastIndexOfAny(testChars) select String.Concat(line[minIndex], line[maxIndex]) into i select int.Parse(i)).Sum();
-    }
+        int total = 0;
 
-
-    public async Task<int> wordsAndDigits(string input)
-    {
-        var lines = input.GetLines();
-        string[] digits = new string[]
+        foreach (var s in inputArray)
         {
-            "0",
-            "1",
-            "2",
-            "3",
-            "4",
-            "5",
-            "6",
-            "7",
-            "8",
-            "9",
-            "zero",
-            "one",
-            "two",
-            "three",
-            "four",
-            "five",
-            "six",
-            "seven",
-            "eight",
-            "nine"
-        };
+            char firstDigit = s.FirstOrDefault(char.IsDigit);
+            char lastDigit = s.LastOrDefault(char.IsDigit);
 
-        var sum = 0;
-        foreach (var line in lines)
-        {
-            
-            var minIndex = digits.Select(s => line.IndexOf(s)).Where(s => s > -1).Min();
-            var maxIndex = digits.Select(s => line.LastIndexOf(s)).Max();
+            string numberToSum = firstDigit + lastDigit.ToString();
 
-            char first;
-            char last;
-
-            if (char.IsDigit(line[minIndex]))
-            {
-                first = line[minIndex];
-            }
-            else
-            {
-                var s2 = line.Substring(minIndex);
-
-                var digit = digits.Where(s => s2.StartsWith(s)).FirstOrDefault();
-
-                first = digit switch
-                {
-                    "one" => '1',
-                    "two" => '2',
-                    "three" => '3',
-                    "four" => '4',
-                    "five" => '5',
-                    "six" => '6',
-                    "seven" => '7',
-                    "eight" => '8',
-                    "nine" => '9'
-                };
-            }
-
-            if (char.IsDigit(line[maxIndex]))
-            {
-                last = line[maxIndex];
-            }
-            else
-            {
-                var s2 = line.Substring(maxIndex);
-
-                var digit = digits.Where(s => s2.StartsWith(s)).FirstOrDefault();
-
-                last = digit switch
-                {
-                    "one" => '1',
-                    "two" => '2',
-                    "three" => '3',
-                    "four" => '4',
-                    "five" => '5',
-                    "six" => '6',
-                    "seven" => '7',
-                    "eight" => '8',
-                    "nine" => '9'
-                };
-            }
-
-            var i = String.Concat(first, last);
-
-            sum += int.Parse(i);
+            total += int.Parse(numberToSum);
         }
 
-        return sum;
+        return total;
+    }
+
+    public async Task<object> TaskPartTwo(string input)
+    {
+        string[] digits = new string[] { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine" };
+
+        var inputArray = input.Split("\r\n");
+
+        int total = 0;
+
+        foreach (var s in inputArray)
+        {
+
+            int minDigitIndex = int.MaxValue;
+            int maxDigitIndex = int.MinValue;
+            int firstDigit = 0;
+            int lastDigit = 0;
+
+            for (int i = 0; i < digits.Length; i++)
+            {
+                string digit = digits[i];
+
+                int index = s.IndexOf(digits[i]);
+
+                if (index < minDigitIndex && index != -1)
+                {
+                    minDigitIndex = index;
+                    firstDigit = int.Parse(i > 9 ? digits[i - 10] : digits[i]);
+                }
+
+                int lastIndex = s.LastIndexOf(digits[i]);
+
+                if (lastIndex <= maxDigitIndex || lastIndex == -1) continue;
+                maxDigitIndex = lastIndex;
+
+                lastDigit = int.Parse(i > 9 ? digits[i - 10] : digits[i]);
+            }
+
+            string numberToSum = firstDigit + lastDigit.ToString();
+
+            total += int.Parse(numberToSum);
+        }
+
+        return total;
     }
 }

@@ -1,7 +1,4 @@
-﻿using Microsoft.AspNetCore.Http.Features;
-using System.Security.Cryptography.X509Certificates;
-
-namespace AdventOfCodeSharp.Challenge.Y2023.Day03
+﻿namespace AdventOfCodeSharp.Challenge.Y2023.Day03
 {
 
     public record coord(int x, int y);

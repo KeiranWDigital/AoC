@@ -39,11 +39,6 @@ public static class ChallengeExtensions
         StringSplitOptions.None
     ).Select(i => !string.IsNullOrWhiteSpace(i)? (int?) int.Parse(i) : null);
 
-    public static IEnumerable<string?>? GetLines(this string input) => input.Split(
-        new[] { "\r\n", "\r", "\n" },
-        StringSplitOptions.None
-    );
-
     public static string WorkingDir(int year)
     {
         return Path.Combine($"Y{year}");

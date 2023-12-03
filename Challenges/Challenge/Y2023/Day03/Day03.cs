@@ -1,191 +1,199 @@
-﻿using System.Text;
+﻿
 
-namespace Challenges.Challenge.Y2023.Day03;
-
-//Invoked Implicitly
-[ChallengeName("Day 3: Gear Ratios")]
-public class Day03: IChallenge
+namespace AdventOfCodeSharp.Challenge.Y2023.Day03
 {
-    public async Task<object> TaskPartOne(string input) =>  PartNumbers(ParseInput(input)).Select(x=>x.Part).Sum();
 
-    public async Task<object> TaskPartTwo(string input) => GearRatios(ParseInput(input)).Sum();
+    private record coord(int x, int y);
 
-
-    public IEnumerable<PartNumber> PartNumbers(char[][] schematic)
+    private class PartNumber
     {
-        var yLength = schematic.Length;
-        var xLength = schematic[0].Length;
+        public List<coord> coords { get; set; }
+        public int partNumber { get; set; }
 
-        List<PartNumber> partNumber = new();
-
-        StringBuilder number = new();
-        bool isPart = false;
-        List<Coord> coords = new();
-
-        for (var y = 0; y < yLength; y++)
+        public PartNumber(List<coord> coords, int partNumber)
         {
-            if (!schematic[y].Any(char.IsDigit)) continue;
+            this.coords = coords;
+            this.partNumber = partNumber;
+        }
 
-            for (var x = 0; x < xLength; x++)
+    }
+
+    
+
+    [ChallengeName("Day 3: Gear Ratios")]
+    private class Day03 : IChallenge
+    {
+        public async Task<object> TaskPartOne(string input)
+        {
+            List<PartNumber> partNumbers = GetPartNumbers(input);
+
+            return partNumbers.Sum(x => x.partNumber);
+
+        }
+
+        private List<PartNumber> GetPartNumbers(string input)
+        {
+            var partNumbers = new List<PartNumber>();
+
+            List<string> lines = input.GetLines().ToList();
+            List<coord> coords = new List<coord>();
+            string currentItem = "";
+            bool isPartNumber = false;
+
+            for (int y = 0; y < lines.Count; y++)
             {
-                if (x == 0)
+                if (isPartNumber)
                 {
-
-                    if (isPart)
-                    {
-                        var part = new PartNumber(coords, int.Parse(number.ToString()));
-                        partNumber.Add(part);
-                    }
-
-                    number.Clear();
-                    isPart = false;
-                    coords = new();
+                    partNumbers.Add(new PartNumber(coords, int.Parse(currentItem)));
                 }
 
-                char check = schematic[y][x];
+                currentItem = "";
+                isPartNumber = false;
+                coords = new List<coord>();
+                var line = lines[y];
 
-                if (char.IsDigit(check))
+                for (int x = 0; x < line.Length; x++)
                 {
-                    if (!isPart) isPart = IsPartNumber(schematic, x, y);
-
-                    number.Append(check);
-                    coords.Add(new Coord(x, y));
-                }
-                else
-                {
-                    if (isPart)
+                    if (int.TryParse(line[x].ToString(), out int digit))
                     {
-                        var part = new PartNumber(coords, int.Parse(number.ToString()));
-                        partNumber.Add(part);
-                    }
+                        //the character is a digit
+                        currentItem += digit;
+                        coords.Add(new coord(x, y));
 
-                    number.Clear();
-                     isPart = false;
-                     coords = new();
+
+                        //does it have a symbol next to it?
+
+                        if (y != 0)
+                        { //not the first line
+                          //above left
+
+                            if (x != 0)
+                            {
+                                //not the first char
+                                if (IsSymbol(lines[y - 1][x - 1]))
+                                    isPartNumber = true;
+                            }
+
+                            //above 
+                            if (IsSymbol(lines[y - 1][x]))
+                                isPartNumber = true;
+
+                            //above right
+                            if (x < line.Length - 1)
+                            {
+                                //not the last char
+                                if (IsSymbol(lines[y - 1][x + 1]))
+                                    isPartNumber = true;
+                            }
+                        }
+                        if (x != 0)
+                        {
+                            //not the first char
+                            if (IsSymbol(lines[y][x - 1]))
+                                isPartNumber = true;
+                        }
+
+                        if (x < line.Length - 1)
+                        {
+                            //not the last char
+                            if (IsSymbol(lines[y][x + 1]))
+                                isPartNumber = true;
+                        }
+
+                        if (y < lines.Count() - 1)
+                        {
+                            //not the last line
+                            if (x != 0)
+                            {
+                                //not the first char
+                                //below left
+                                if (IsSymbol(lines[y + 1][x - 1]))
+                                    isPartNumber = true;
+                            }
+
+                            //below 
+                            if (IsSymbol(lines[y + 1][x]))
+                                isPartNumber = true;
+
+                            //below right
+                            if (x < line.Length - 1)
+                            {
+                                //not the last char
+                                if (IsSymbol(lines[y + 1][x + 1]))
+                                    isPartNumber = true;
+                            }
+                        }
+
+                    }
+                    else
+                    {
+                        if (isPartNumber)
+                        {
+                            partNumbers.Add(new PartNumber(coords, int.Parse(currentItem)));
+                        }
+
+                        currentItem = "";
+                        isPartNumber = false;
+                        coords = new List<coord>();
+
+                        currentItem = "";
+                        isPartNumber = false;
+                    }
+                }
+
+
+
+            }
+
+            return partNumbers;
+        }
+
+        private bool IsSymbol(char x)
+        {
+            if (x == '.') return false;
+            if (char.IsLetterOrDigit((char)x)) return false;
+            return true;
+        }
+
+
+        public async Task<object> TaskPartTwo(string input)
+        {
+            int total = 0;
+
+            Char[][] lines = input.GetLines().Select(x => x.ToCharArray()).ToArray();
+
+            List<PartNumber> partNumbers = GetPartNumbers(input);
+
+            for (int y = 0; y < lines.Length; y++)
+            {
+                for (int x = 0; x < lines[y].Length; x++)
+                {
+                    if (lines[y][x] == '*')
+                    {
+                        List<coord> coords =
+                        [
+                            new coord(x - 1, y - 1),
+                            new coord(x, y - 1),
+                            new coord(x + 1, y - 1),
+                            new coord(x - 1, y + 1),
+                            new coord(x, y + 1),
+                            new coord(x + 1, y + 1),
+                            new coord(x - 1, y),
+                            new coord(x + 1, y),
+                        ];
+
+                        var matchingNumbers = partNumbers.FindAll(x => x.coords.Intersect(coords).Any());
+                        if(matchingNumbers.Count == 2)
+                        {
+                            int multiplied = matchingNumbers[0].partNumber * matchingNumbers[1].partNumber;
+                            total += multiplied;
+                        }
+                      
+                    }
                 }
             }
-        }
-        return partNumber;
-    }
 
-
-    public IEnumerable<int> GearRatios(char[][] schematic)
-    {
-        var partNumber = PartNumbers(schematic);
-
-        var yLength = schematic.Length;
-        var xLength = schematic[0].Length;
-
-        List<int> gearRatio = new();
-
-        for (var y = 0; y < yLength; y++)
-        {
-            if (!schematic[y].Contains('*')) continue;
-
-            for (var x = 0; x < xLength; x++)
-            {
-                char check = schematic[y][x];
-
-                if (check == '*')
-                {
-                    bool canCheckNorth = y > 0;
-                    bool canCheckSouth = y < yLength - 1;
-                    bool canCheckEast = x < xLength - 1;
-                    bool canCheckWest = x > 0;
-
-                    List<Coord> coordList = new();
-
-                    if (canCheckNorth) coordList.Add(new Coord(x + N.X, y + N.Y));
-                    if (canCheckSouth) coordList.Add(new Coord(x + S.X, y + S.Y));
-                    if (canCheckEast) coordList.Add(new Coord(x + E.X, y + E.Y));
-                    if (canCheckWest) coordList.Add(new Coord(x + W.X, y + W.Y));
-                    if (canCheckNorth && canCheckEast) coordList.Add(new Coord(x + NE.X, y + NE.Y));
-                    if (canCheckNorth && canCheckWest) coordList.Add(new Coord(x + NW.X, y + NW.Y));
-                    if (canCheckSouth && canCheckEast) coordList.Add(new Coord(x + SE.X, y + SE.Y));
-                    if (canCheckSouth && canCheckWest) coordList.Add(new Coord(x + SW.X, y + SW.Y));
-
-
-                    var partsNextToo = partNumber.Where(x => x.Coords.Intersect(coordList).Any());
-
-                    if (partsNextToo.Count() == 2)
-                    {
-                        gearRatio.Add(partsNextToo.Select(s => s.Part).Aggregate(1, (a,b) => a * b));
-                    }
-                }
+            return total;
             }
         }
-
-        return gearRatio;
     }
-
-    public bool IsPartNumber(char[][] schematic, int x, int y)
-    {
-        var yLength = schematic.Length;
-        var xLength = schematic[0].Length;
-
-        bool canCheckNorth = y > 0;
-        bool canCheckSouth = y < yLength - 1;
-        bool canCheckEast = x < xLength - 1;
-        bool canCheckWest = x > 0;
-
-        if (canCheckNorth && isSymbol(schematic[y + N.Y][x + N.X])) return true;
-        if (canCheckSouth && isSymbol(schematic[y + S.Y][x + S.X])) return true;
-        if (canCheckEast && isSymbol(schematic[y + E.Y][x + E.X])) return true;
-        if (canCheckWest && isSymbol(schematic[y + W.Y][x + W.X])) return true;
-        if (canCheckNorth && canCheckEast && isSymbol(schematic[y + NE.Y][x + NE.X])) return true;
-        if (canCheckNorth && canCheckWest && isSymbol(schematic[y + NW.Y][x + NW.X])) return true;
-        if (canCheckSouth && canCheckEast && isSymbol(schematic[y + SE.Y][x + SE.X])) return true;
-        if (canCheckSouth && canCheckWest && isSymbol(schematic[y + SW.Y][x + SW.X])) return true;
-
-        return false;
-    }
-
-    public bool isSymbol(char check)
-    {
-        return !char.IsDigit(check) && check != '.';
-    }
-
-    public char[][] ParseInput(string input)
-    {
-        return input.GetLines().Select(x => x.ToCharArray()).ToArray();
-    }
-
-    public record Coord
-    {
-        public int X;
-        public int Y;
-
-        public Coord(int x, int y)
-        {
-            this.X = x;
-            this.Y = y;
-        }
-    }
-
-    private Coord N = new(0, -1);
-    private Coord NE = new(1, -1);
-    private Coord NW = new(-1, -1);
-
-    private Coord S = new(0, 1);
-    private Coord SE = new(1, 1);
-    private Coord SW = new(-1, 1);
-
-    private Coord E = new(1, 0);
-    private Coord W = new(-1, 0);
-
-
-    public class PartNumber
-    {
-        public PartNumber(IEnumerable<Coord> coords, int part)
-        {
-            Coords = coords;
-            Part = part;
-        }
-
-        public int Part { get; set; }
-        public IEnumerable<Coord> Coords { get; set; }
-
-
-
-    }
-}
