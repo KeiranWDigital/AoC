@@ -10,9 +10,9 @@ public class Day02: IChallenge
     public async Task<object> TaskPartTwo(string input) => await SumPowerGames(input.GetLines());
 
 
-    private readonly int red = 12;
-    private readonly int green = 13;
-    private readonly int blue = 14;
+    private const int red = 12;
+    private const int green = 13;
+    private const int blue = 14;
 
     public async Task<int> SumValidGames(IEnumerable<string> games)
     {
