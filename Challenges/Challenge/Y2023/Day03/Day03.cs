@@ -1,11 +1,14 @@
 ﻿
 
+using System.Drawing;
+
 namespace AdventOfCodeSharp.Challenge.Y2023.Day03
 {
 
-    private record coord(int x, int y);
 
-    private class PartNumber
+    public record coord(int x, int y);
+
+    public class PartNumber
     {
         public List<coord> coords { get; set; }
         public int partNumber { get; set; }
@@ -18,10 +21,8 @@ namespace AdventOfCodeSharp.Challenge.Y2023.Day03
 
     }
 
-    
-
     [ChallengeName("Day 3: Gear Ratios")]
-    private class Day03 : IChallenge
+    public class Day03 : IChallenge
     {
         public async Task<object> TaskPartOne(string input)
         {
