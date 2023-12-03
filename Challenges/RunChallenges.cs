@@ -51,7 +51,7 @@ public class RunChallenges
             input = await reader.ReadToEndAsync();
 
         var basePath = _environmentPath;
-        var challengePath = Path.Combine(basePath, "../Challenges", "Challenge", challenge.WorkingDir());
+        var challengePath = Path.Combine(basePath, "..\\Challenges", "Challenge", challenge.WorkingDir());
 
         var result = await challenge.CompleteChallenge(input);
         await WriteAllLinesAsync(Path.Combine(challengePath, "result.output"), new[] { JsonConvert.SerializeObject(result, Formatting.Indented) ?? "" });
