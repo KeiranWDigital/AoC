@@ -15,25 +15,25 @@ namespace Challenges.Challenge.Y2023.Day04
             public List<int> MatchedNumbers => (Numbers.Intersect(WinningNumbers).ToList());
             public int Matches => MatchedNumbers.Count;
             public int Score => CalculateScore(Matches);
-            public bool Played = false;
         }
 
         public static class Game
         {
             public static List<Card> cards = new();
-
         }
 
         public static int CalculateScore(int matches)
         {
-            if (matches == 0) return 0;
-            if (matches == 1)
+            switch (matches)
             {
-                return 1;
+                case 0:
+                    return 0;
+                case 1:
+                    return 1;
             }
 
-            int score = 1;
-            for (int i = 1; i < matches; i++)
+            var score = 1;
+            for (var i = 1; i < matches; i++)
             {
                 score *= 2;
             }
@@ -44,25 +44,24 @@ namespace Challenges.Challenge.Y2023.Day04
         private static Card ParseCard(string input)
         {
             Card card = new();
-            string[] parts = input.Split(':');
+            var parts = input.Split(':');
 
             if (parts.Length >= 2)
             {
-                if (int.TryParse(parts[0].Substring(parts[0].IndexOf("Card") + 4), out int cardId))
+                if (int.TryParse(parts[0][(parts[0].IndexOf("Card") + 4)..], out var cardId))
                 {
                     card.Id = cardId;
                 }
             }
 
-            string[] numbers = parts[1].Split("|");
+            var numbers = parts[1].Split("|");
 
-            string[] scratchNumbers = numbers[0].Split(" ");
-            string[] winningNumbers = numbers[1].Split(" ");
-
+            var scratchNumbers = numbers[0].Split(" ");
+            var winningNumbers = numbers[1].Split(" ");
 
             foreach (var winningNumber in winningNumbers)
             {
-                if (int.TryParse(winningNumber, out int number))
+                if (int.TryParse(winningNumber, out var number))
                 {
                     card.WinningNumbers.Add(number);
                 }
@@ -70,7 +69,7 @@ namespace Challenges.Challenge.Y2023.Day04
 
             foreach (var scratchNumber in scratchNumbers)
             {
-                if (int.TryParse(scratchNumber, out int number))
+                if (int.TryParse(scratchNumber, out var number))
                 {
                     card.Numbers.Add(number);
                 }
@@ -82,14 +81,9 @@ namespace Challenges.Challenge.Y2023.Day04
 
         public async Task<object> TaskPartOne(string input)
         {
-            List<Card> cards = new();
-
             var inputCards = input.GetLines();
 
-            foreach (var inputCard in inputCards)
-            {
-                cards.Add(ParseCard(inputCard));
-            }
+            var cards = inputCards.Select(ParseCard).ToList();
 
             return cards.Sum(x => x.Score);
         }
@@ -99,8 +93,6 @@ namespace Challenges.Challenge.Y2023.Day04
         {
             var inputCards = input.GetLines().ToList();
 
-            int total = 0;
-
             foreach (var inputCard in inputCards)
             {
                 var card = ParseCard(inputCard);
@@ -109,7 +101,7 @@ namespace Challenges.Challenge.Y2023.Day04
 
             var count = Game.cards.Count;
 
-            for (int i = 0; i < count; i++)
+            for (var i = 0; i < count; i++)
             {
                 PlayCard(i);
             }
@@ -121,14 +113,12 @@ namespace Challenges.Challenge.Y2023.Day04
         {
             var card = Game.cards[index];
 
-            for (int i = 1; i < card.Matches + 1; i++)
+            for (var i = 1; i < card.Matches + 1; i++)
             {
                 var copyCard = Game.cards.Find(x => x.Id == card.Id + i);
                 Game.cards.Add(copyCard);
                 PlayCard(i + index);
             }
-
         }
-
     }
 }
