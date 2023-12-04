@@ -26,7 +26,7 @@ namespace AdventOfCodeSharp.Challenge.Y2023.Day03
     {
         public async Task<object> TaskPartOne(string input)
         {
-            List<PartNumber> partNumbers = GetPartNumbers(input);
+            var partNumbers = GetPartNumbers(input);
 
             return partNumbers.Sum(x => x.partNumber);
 
@@ -37,11 +37,11 @@ namespace AdventOfCodeSharp.Challenge.Y2023.Day03
             var partNumbers = new List<PartNumber>();
 
             List<string> lines = input.GetLines().ToList();
-            List<coord> coords = new List<coord>();
-            string currentItem = "";
-            bool isPartNumber = false;
+            var coords = new List<coord>();
+            var currentItem = "";
+            var isPartNumber = false;
 
-            for (int y = 0; y < lines.Count; y++)
+            for (var y = 0; y < lines.Count; y++)
             {
                 if (isPartNumber)
                 {
@@ -53,9 +53,9 @@ namespace AdventOfCodeSharp.Challenge.Y2023.Day03
                 coords = new List<coord>();
                 var line = lines[y];
 
-                for (int x = 0; x < line.Length; x++)
+                for (var x = 0; x < line.Length; x++)
                 {
-                    if (int.TryParse(line[x].ToString(), out int digit))
+                    if (int.TryParse(line[x].ToString(), out var digit))
                     {
                         //the character is a digit
                         currentItem += digit;
@@ -159,15 +159,15 @@ namespace AdventOfCodeSharp.Challenge.Y2023.Day03
 
         public async Task<object> TaskPartTwo(string input)
         {
-            int total = 0;
+            var total = 0;
 
             Char[][] lines = input.GetLines().Select(x => x.ToCharArray()).ToArray();
 
             List<PartNumber> partNumbers = GetPartNumbers(input);
 
-            for (int y = 0; y < lines.Length; y++)
+            for (var y = 0; y < lines.Length; y++)
             {
-                for (int x = 0; x < lines[y].Length; x++)
+                for (var x = 0; x < lines[y].Length; x++)
                 {
                     if (lines[y][x] == '*')
                     {
@@ -186,7 +186,7 @@ namespace AdventOfCodeSharp.Challenge.Y2023.Day03
                         var matchingNumbers = partNumbers.FindAll(x => x.coords.Intersect(coords).Any());
                         if(matchingNumbers.Count == 2)
                         {
-                            int multiplied = matchingNumbers[0].partNumber * matchingNumbers[1].partNumber;
+                            var multiplied = matchingNumbers[0].partNumber * matchingNumbers[1].partNumber;
                             total += multiplied;
                         }
                       
