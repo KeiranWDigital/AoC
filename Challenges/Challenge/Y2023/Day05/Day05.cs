@@ -135,7 +135,86 @@ namespace Challenges.Challenge.Y2023.Day05
 
         public async Task<object> TaskPartTwo(string input)
         {
-            return 0;
+            Int64 min = Int64.MaxValue;
+            var inputLines = input.GetLines().ToList();
+
+            var maps = new Dictionary<string, Map>();
+
+            var seeds = new List<Int64>();
+
+            var seedParts = inputLines[0].Split(":")[1].Trim().Split(" ");
+            inputLines.RemoveAt(0);
+
+            var currentMapName = "";
+
+            foreach (var line in inputLines)
+            {
+                if (line == "") continue;
+
+                if (line.Contains("map"))
+                {
+
+                    var mapParts = line.Split("-");
+                    var map = new Map()
+                    {
+                        SourceName = mapParts[0],
+                        DestinationName = mapParts[2].Split(" ")[0]
+                    };
+                    maps.Add(mapParts[0], map);
+                    currentMapName = mapParts[0];
+                    continue;
+                }
+
+                var mapItemsParts = line.Split(" ");
+                if (mapItemsParts.Length == 3)
+                {
+                    maps[currentMapName].MapItems.Add(new MapItem()
+                    {
+                        DestinationId = Int64.Parse(mapItemsParts[0]),
+                        SourceId = Int64.Parse(mapItemsParts[1]),
+                        Range = Int64.Parse(mapItemsParts[2])
+                    });
+
+                    Console.WriteLine(Int64.Parse(mapItemsParts[2]));
+                }
+
+            }
+
+            Console.WriteLine("181");
+
+            for (var i = 0; i< seedParts.Length ; i++)
+            {
+                var seedStart = Int64.Parse(seedParts[i]);
+                var seedEnd = Int64.Parse(seedParts[i+1]);
+
+                for (var j = seedStart; j < seedEnd; j++)
+                {
+
+                        Map mapToUse;
+
+                        Int64 nextNumber = j;
+
+                        string[] categories = { "seed", "soil", "fertilizer", "water", "light", "temperature", "humidity" };
+
+                        foreach (var category in categories)
+                        {
+                            mapToUse = maps[category];
+
+                            nextNumber = mapToUse.Convert(nextNumber);
+                        }
+
+                        //nextNumber should be location by now
+
+                        if(nextNumber < min) min = nextNumber;
+                    
+                }
+              
+            }
+
+
+           
+
+            return min;
         }
 
     }
