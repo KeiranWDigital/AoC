@@ -1,11 +1,8 @@
-﻿using static Challenges.Challenge.Y2022.Day02.Day02;
-using System.Text;
-using static Challenges.Challenge.Y2023.Day04.Day04;
-
+﻿
 namespace Challenges.Challenge.Y2023.Day04
 {
     [ChallengeName("Day 4: Scratchcards")]
-    public class Day04 : IChallenge
+    public class Day0 : IChallenge
     {
         public class Card
         {

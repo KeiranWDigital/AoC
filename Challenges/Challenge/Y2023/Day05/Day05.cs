@@ -1,5 +1,9 @@
 ﻿
 
+using Challenges.Util;
+using System.Linq;
+using System.Reflection.Metadata;
+
 namespace Challenges.Challenge.Y2023.Day05
 {
     [ChallengeName("Day 5: If You Give A Seed A Fertilizer")]
@@ -10,8 +14,7 @@ namespace Challenges.Challenge.Y2023.Day05
             public List<MapItem> MapItems = new();
             public string SourceName { get; set; }
             public string DestinationName { get; set; }
-            /*public Dictionary<Int64,Int64> Items => GetItems(MapItems);*/
-            public Int64 Convert(Int64 number)
+            public long Convert(long number)
             {
                 foreach (var item in MapItems)
                 {
@@ -25,13 +28,13 @@ namespace Challenges.Challenge.Y2023.Day05
 
         private class MapItem
         {
-            public Int64 SourceId { get; set; }
-            public Int64 DestinationId { get; set; }
+            public long SourceId { get; set; }
+            public long DestinationId { get; set; }
 
-            public Int64 Difference => (DestinationId - SourceId);
-            public Int64 Range { get; set; }
+            public long Difference => (DestinationId - SourceId);
+            public long Range { get; set; }
 
-            public bool IsInMapItem(Int64 number)
+            public bool IsInMapItem(long number)
             {
                 if(number >= SourceId && number <= SourceId + Range) return true;
 
@@ -39,12 +42,12 @@ namespace Challenges.Challenge.Y2023.Day05
             }
         }
 
-        private static Dictionary<Int64, Int64> GetItems(List<MapItem> MapItems)
+        private static Dictionary<long, long> GetItems(List<MapItem> MapItems)
         {
-            Dictionary<Int64, Int64> items = new();
+            Dictionary<long, long> items = new();
             foreach (var item in MapItems)
             {
-                for(Int64 i=0;i < item.Range;i++)
+                for(long i=0;i < item.Range;i++)
                 {
                     items.Add(item.SourceId + i, item.DestinationId + i);
                 }
@@ -59,13 +62,13 @@ namespace Challenges.Challenge.Y2023.Day05
 
             var maps = new Dictionary<string,Map>();
 
-            var seeds = new List<Int64>();
+            var seeds = new List<long>();
 
             var seedParts = inputLines[0].Split(":")[1].Trim().Split(" ");
 
             foreach(var seed in seedParts)
             {
-                if (Int64.TryParse(seed, out Int64 seedid))
+                if (long.TryParse(seed, out long seedid))
                 {
                     seeds.Add(seedid);
                 }
@@ -98,21 +101,21 @@ namespace Challenges.Challenge.Y2023.Day05
                 {
                     maps[currentMapName].MapItems.Add(new MapItem()
                     {
-                        DestinationId = Int64.Parse(mapItemsParts[0]),
-                        SourceId = Int64.Parse(mapItemsParts[1]),
-                        Range = Int64.Parse(mapItemsParts[2])
+                        DestinationId = long.Parse(mapItemsParts[0]),
+                        SourceId = long.Parse(mapItemsParts[1]),
+                        Range = long.Parse(mapItemsParts[2])
                     });
                 }
 
             }
-            List<Int64> locations = new List<Int64>();
+            List<long> locations = new List<long>();
 
             foreach (var seed in seeds)
             {
 
                 Map mapToUse;
 
-                Int64 nextNumber = seed;
+                long nextNumber = seed;
 
                 string[] categories = { "seed","soil", "fertilizer", "water", "light", "temperature", "humidity" };
 
@@ -132,21 +135,40 @@ namespace Challenges.Challenge.Y2023.Day05
             return locations.Min();
         }
 
+        public class SeedPart
+        {
+            public long Start { get; set; }
+            public long Range { get;set; }
+        }
 
         public async Task<object> TaskPartTwo(string input)
         {
-            Int64 min = Int64.MaxValue;
+            var min = long.MaxValue;
             var inputLines = input.GetLines().ToList();
 
             var maps = new Dictionary<string, Map>();
 
-            var seeds = new List<Int64>();
+            var locations = new List<long>();
 
             var seedParts = inputLines[0].Split(":")[1].Trim().Split(" ");
             inputLines.RemoveAt(0);
 
             var currentMapName = "";
 
+            List<SeedPart> objSeedParts = new List<SeedPart>();
+
+            for (var i = 0; i < seedParts.Length; i += 2)
+            {
+                var seedStart = long.Parse(seedParts[i]);
+                var seedRange = long.Parse(seedParts[i + 1]);
+                objSeedParts.Add(new SeedPart()
+                {
+                    Start = seedStart,
+                    Range = seedRange
+                });
+            }
+
+            
             foreach (var line in inputLines)
             {
                 if (line == "") continue;
@@ -170,31 +192,45 @@ namespace Challenges.Challenge.Y2023.Day05
                 {
                     maps[currentMapName].MapItems.Add(new MapItem()
                     {
-                        DestinationId = Int64.Parse(mapItemsParts[0]),
-                        SourceId = Int64.Parse(mapItemsParts[1]),
-                        Range = Int64.Parse(mapItemsParts[2])
+                        DestinationId = long.Parse(mapItemsParts[0]),
+                        SourceId = long.Parse(mapItemsParts[1]),
+                        Range = long.Parse(mapItemsParts[2])
                     });
-
-                    Console.WriteLine(Int64.Parse(mapItemsParts[2]));
                 }
-
             }
 
-            Console.WriteLine("181");
 
-            for (var i = 0; i< seedParts.Length ; i++)
+            int numThreads = objSeedParts.Count / 2;
+
+            // Array to hold the threads
+            Thread[] threads = new Thread[numThreads];
+
+            for (int i = 0; i < numThreads; i++)
             {
-                var seedStart = Int64.Parse(seedParts[i]);
-                var seedEnd = Int64.Parse(seedParts[i+1]);
+                threads[i]=(new Thread(new ParameterizedThreadStart(Calculate)));
+                threads[i].Start(i.ToString());
+            }
 
-                for (var j = seedStart; j < seedEnd; j++)
+            // Wait for all threads to complete
+            for (int i = 0; i < numThreads; i++)
+            {
+                threads[i].Join();
+            }
+
+            return locations.Min();
+
+            void Calculate(object number)
+            {
+                var i = int.Parse(number.ToString());
+                for (var j = objSeedParts[i].Start; j < objSeedParts[i].Start + objSeedParts[i].Range; j++)
                 {
-
+                    {
                         Map mapToUse;
 
-                        Int64 nextNumber = j;
+                        long nextNumber = j;
 
-                        string[] categories = { "seed", "soil", "fertilizer", "water", "light", "temperature", "humidity" };
+                        string[] categories =
+                            { "seed", "soil", "fertilizer", "water", "light", "temperature", "humidity" };
 
                         foreach (var category in categories)
                         {
@@ -203,19 +239,16 @@ namespace Challenges.Challenge.Y2023.Day05
                             nextNumber = mapToUse.Convert(nextNumber);
                         }
 
-                        //nextNumber should be location by now
-
-                        if(nextNumber < min) min = nextNumber;
-                    
+                        lock (locations)
+                        {
+                            locations.Add(nextNumber);
+                        }
+                    }
                 }
-              
             }
-
-
-           
-
-            return min;
         }
+
+       
 
     }
 }
